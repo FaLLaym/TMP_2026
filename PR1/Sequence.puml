@@ -1,0 +1,29 @@
+@startuml
+actor Cassir
+participant "UI" as UI
+participant "SaleController" as Controller
+participant "Match" as Match
+participant "Seat" as Seat
+participant "Ticket" as Ticket
+participant "Sale" as Sale
+
+Cassir -> UI : choose match
+UI -> Controller : selectMatch(matchId)
+Controller -> Match : getAvailableSeats()
+Match --> Controller : seats
+Controller --> UI : showSeats(seats)
+
+Cassir -> UI : choose seat(seatId)
+UI -> Controller : reserveSeat(seatId)
+Controller -> Seat : reserve()
+Seat --> Controller : success
+
+Cassir -> UI : confirm payment
+UI -> Controller : confirmPayment()
+Controller -> Ticket : create(match, seat)
+Ticket --> Controller : ticket
+Controller -> Sale : addTicket(ticket)
+Sale --> Controller : ok
+Controller -> UI : printTicket()
+UI --> Cassir : your ticket is ready
+@enduml

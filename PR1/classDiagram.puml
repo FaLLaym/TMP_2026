@@ -1,0 +1,98 @@
+@startuml
+package "Entities" {
+  class Match {
+    - date: Date
+    - time: Time
+    - homeTeam: String
+    - awayTeam: String
+    - status: String
+    + getAvailableSeats(): List<Seat>
+  }
+
+  class Stadium {
+    - name: String
+    - capacity: int
+    + getSectors(): List<Sector>
+  }
+
+  class Sector {
+    - number: String
+    - defaultPrice: float
+    + getSeats(): List<Seat>
+  }
+
+  class Seat {
+    - row: int
+    - number: int
+    - isAvailable: boolean
+    + reserve()
+    + release()
+  }
+
+  class Ticket {
+    - code: String
+    - price: float
+    - status: String
+    + print()
+  }
+
+  class SeasonTicket {
+    - series: String
+    - matchesCount: int
+    - owner: String
+    + isValid(): boolean
+  }
+
+  class Customer {
+    - name: String
+    - phone: String
+    + getHistory(): List<Sale>
+  }
+}
+
+package "Sales" {
+  class Sale {
+    - date: DateTime
+    - total: float
+    + addItem(Product)
+    + getTotal(): float
+  }
+
+  class CashDesk {
+    - number: int
+    - location: String
+    + openSale(): Sale
+    + closeSale()
+  }
+}
+
+package "Reports" {
+  class SalesReport {
+    - period: String
+    + generate(): File
+  }
+}
+
+package "Admin" {
+  class MatchManager {
+    + createMatch()
+    + cancelMatch()
+  }
+  class PriceManager {
+    + setPrice(Sector, float)
+  }
+}
+
+Stadium "1" --* "1..*" Sector : contains
+Sector "1" --* "1..*" Seat : contains
+Match "1" -- "1" Stadium : played at
+Match "1" -- "0..*" Ticket : sold for
+Seat "1" -- "0..1" Ticket : assigned to
+Customer "1" -- "0..*" Sale : makes
+Sale "1" -- "1..*" Ticket : includes
+Sale "1" -- "0..*" SeasonTicket : includes
+
+Ticket <|-- SeasonTicket : extends
+
+SalesReport .> Sale : depends on
+@enduml

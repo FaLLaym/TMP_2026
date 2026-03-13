@@ -1,0 +1,55 @@
+@startuml use_case_online_store
+left to right direction
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #E8F6F3
+  BorderColor #1F618D
+}
+
+actor "Покупатель" as Customer
+actor "Администратор" as Admin
+actor "Менеджер" as Manager
+actor "Платёжная система" as PaymentSystem
+actor "Служба доставки" as DeliveryService
+
+rectangle "Интернет-магазин" {
+
+  usecase "Регистрация" as UC1
+  usecase "Вход в систему" as UC2
+  usecase "Аутентификация" as UC2a
+  usecase "Просмотр каталога" as UC3
+  usecase "Поиск товара" as UC4
+  usecase "Добавление в корзину" as UC5
+  usecase "Оформление заказа" as UC6
+  usecase "Проверка наличия товара" as UC6a
+  usecase "Онлайн-оплата" as UC7
+  usecase "Просмотр истории заказов" as UC8
+  usecase "Отмена заказа" as UC9
+  usecase "Управление товарами" as UC10
+  usecase "Обработка заказа" as UC11
+  usecase "Передача в доставку" as UC12
+}
+
+Customer --> UC1
+Customer --> UC2
+Customer --> UC3
+Customer --> UC4
+Customer --> UC5
+Customer --> UC6
+Customer --> UC7
+Customer --> UC8
+Customer --> UC9
+
+UC2 ..> UC2a : <<include>>
+UC6 ..> UC6a : <<include>>
+UC6 ..> UC7 : <<include>>
+
+Admin --> UC10
+
+Manager --> UC11
+UC11 ..> UC12 : <<include>>
+
+PaymentSystem --> UC7
+DeliveryService --> UC12
+
+@enduml
