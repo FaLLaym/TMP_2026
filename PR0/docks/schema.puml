@@ -1,0 +1,46 @@
+@startuml
+' Стиль для Go (стрелки для имплементации)
+skinparam classAttributeIconSize 0
+hide empty members
+
+' Определяем наш пакет main
+package main {
+
+  ' Интерфейс
+  interface Notifier {
+    +Send(message string) error
+  }
+
+  ' Структуры, реализующие интерфейс
+  class EmailNotifier {
+    +smtpHost: string
+    +smtpPort: int
+    +Send(message string) error
+  }
+  note right of EmailNotifier
+    Отправляет email
+    через SMTP.
+  end note
+
+  class SmsNotifier {
+    +apiKey: string
+    +phoneNumber: string
+    +Send(message string) error
+  }
+
+  ' Структура UserIvanovIvan, которая зависит от Notifier
+  class UserIvanovIvan {
+    -name: string
+    -email: string
+    -notifier: Notifier
+    +NewUser(name string, email string, notifier Notifier) *UserIvanovIvan
+    +Notify(message string) error
+  }
+
+  ' Связи
+  Notifier <|.. EmailNotifier : реализует
+  Notifier <|.. SmsNotifier : реализует
+  UserIvanovIvan *--> Notifier : использует >
+
+}
+@enduml
