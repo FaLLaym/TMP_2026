@@ -1,0 +1,32 @@
+@startuml
+actor Кассир
+participant ":UI" as UI
+participant ":SaleController" as Controller
+participant ":Match" as Match
+participant ":Seat" as Seat
+participant ":Ticket" as Ticket
+participant ":Sale" as Sale
+participant ":Printer" as Printer
+
+Кассир -> UI: выбрать матч
+UI -> Controller: selectMatch(matchId)
+Controller -> Match: getAvailableSeats()
+Match --> Controller: seats
+Controller --> UI: showSeats(seats)
+
+Кассир -> UI: выбрать место(seatId)
+UI -> Controller: reserveSeat(seatId)
+Controller -> Seat: reserve()
+Seat --> Controller: success
+
+Кассир -> UI: подтвердить оплату
+UI -> Controller: processPayment(amount)
+Controller -> Controller: validatePayment()
+Controller -> Ticket: create(match, seat, price)
+Ticket --> Controller: ticket
+Controller -> Sale: addTicket(ticket)
+Sale --> Controller: ok
+Controller -> Printer: printTicket(ticket)
+Printer --> UI: printing complete
+UI --> Кассир: билет готов
+@enduml

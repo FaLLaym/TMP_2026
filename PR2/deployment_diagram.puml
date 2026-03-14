@@ -1,0 +1,67 @@
+@startuml
+title Диаграмма развёртывания - Система продажи билетов
+
+node "Клиентский уровень" {
+  artifact "Кассовый терминал" as CashTerminal {
+    component "UI (Java Swing)" as CashUI
+    component "Принтер чеков" as Printer
+    component "Сканер штрих-кодов" as Scanner
+  }
+
+  artifact "Административная консоль" as AdminConsole {
+    component "Admin Web UI" as AdminUI
+  }
+}
+
+node "Сервер приложений" as AppServer {
+  artifact "Веб-сервер (Tomcat)" as WebServer {
+    component "Сервлеты REST API" as REST
+  }
+
+  artifact "Бизнес-логика" as BusinessLogic {
+    component "SaleController" as SaleCtrl
+    component "MatchManager" as MatchMgr
+    component "RefundController" as RefundCtrl
+    component "PriceManager" as PriceMgr
+    component "TicketService" as TicketSvc
+  }
+}
+
+node "Сервер баз данных" as DBServer {
+  database "PostgreSQL" as DB {
+    artifact "Таблицы" as Tables {
+      file "matches"
+      file "tickets"
+      file "sales"
+      file "customers"
+      file "stadiums"
+    }
+  }
+}
+
+node "Платёжный шлюз" as PaymentGateway {
+  component "Payment API" as PaymentAPI
+  component "Банковский эмулятор" as BankSim
+}
+
+node "Сервер отчётов" as ReportServer {
+  artifact "Report Generator" as ReportGen
+  artifact "Хранилище отчётов" as ReportStorage
+}
+
+CashTerminal -- AppServer : HTTPS / REST
+AdminConsole -- AppServer : HTTPS / REST
+AppServer -- DBServer : JDBC
+AppServer -- PaymentGateway : REST/SOAP
+AppServer -- ReportServer : JMS/File transfer
+
+note right of CashTerminal
+  Терминалы установлены
+  в кассах стадиона
+end note
+
+note right of PaymentGateway
+  Внешняя платёжная система
+  (эмуляция для тестов)
+end note
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+actor Кассир
+participant ":UI" as UI
+participant ":RefundController" as Controller
+participant ":Ticket" as Ticket
+participant ":Sale" as Sale
+participant ":RefundPolicy" as Policy
+
+Кассир -> UI: scan ticket code
+UI -> Controller: findTicket(code)
+Controller -> Ticket: getInfo()
+Ticket --> Controller: ticket data
+Controller -> Policy: checkRefundEligibility(ticket)
+Policy --> Controller: eligible (true/false)
+
+alt билет можно вернуть
+    Controller -> Sale: refundTicket(ticket)
+    Sale --> Controller: refund processed
+    Controller -> Ticket: setStatus("refunded")
+    Ticket --> Controller: ok
+    Controller --> UI: showRefundSuccess()
+    UI --> Кассир: билет возвращён
+else билет вернуть нельзя
+    Controller --> UI: showRefundDenied()
+    UI --> Кассир: возврат невозможен
+end
+@enduml

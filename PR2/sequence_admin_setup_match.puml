@@ -1,0 +1,25 @@
+@startuml
+actor Администратор
+participant ":AdminUI" as UI
+participant ":MatchManager" as Manager
+participant ":Match" as Match
+participant ":Stadium" as Stadium
+participant ":Sector" as Sector
+participant ":PriceManager" as PriceMan
+
+Администратор -> UI: create new match
+UI -> Manager: createMatch(home, away, date)
+Manager -> Match: new Match(data)
+Match --> Manager: match created
+Manager -> Stadium: getSectors()
+Stadium --> Manager: sectors
+
+loop for each sector
+    Manager -> PriceMan: setPrice(sector, price)
+    PriceMan -> Sector: updatePrice(price)
+    Sector --> PriceMan: ok
+end
+
+Manager --> UI: match configured
+UI --> Администратор: матч готов к продажам
+@enduml
